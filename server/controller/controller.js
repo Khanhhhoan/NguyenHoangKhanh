@@ -63,6 +63,23 @@ exports.find = (req,res)=>{
     }
 }
 
+// controller/controller.js
+exports.purchase = (req, res) => {
+  const { name, dosage, card, pack, perDay } = req.body;
+
+  const pricePerPack = 50; // giả sử 50$/pack
+  const total = pack * pricePerPack;
+
+  res.json({
+    message: "Purchase successful",
+    customer: name,
+    dosage,
+    card,
+    pack,
+    perDay,
+    totalCost: total,
+  });
+};
 
 // edits a drug selected using its  ID
 exports.update = (req,res)=>{
@@ -108,5 +125,28 @@ exports.delete = (req,res)=>{
                 message: "Could not delete Drug with id=" + id
             });
         });
+// Update a drug by ID
+exports.update = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({ message: "Data to update cannot be empty!" });
+  }
+
+  const id = req.params.id;
+
+  Drugdb.findByIdAndUpdate(id, req.body, { useFindAndModify: false, new: true })
+    .then(data => {
+      if (!data) {
+        res.status(404).send({ message: `Cannot update drug with id=${id}. Maybe not found!` });
+      } else {
+        res.send({
+          message: `${data.name} was updated successfully!`,
+          updatedDrug: data
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({ message: "Error updating drug with id=" + id });
+    });
+};
 
 }

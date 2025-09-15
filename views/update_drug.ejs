@@ -19,8 +19,8 @@
         </div>
         <div class="row mb-3 form-group justify-content-center">
             <label for="card" class="col-3 col-form-label">Tablets per Card</label>
-            <input type="number" name="card" value="<%= drug.card %>" placeholder="Tablets per Card" min="1" max="500" class="col-xs-8 col-md-4">
-        </div>
+          <input type="number" name="card" placeholder="Tablets per Card" min="1001" class="col-xs-8 col-md-4">
+
         <div class="row mb-3 form-group justify-content-center">
             <label for="pack" class="col-3 col-form-label">Tablets per Pack</label>
             <input type="number" name="pack" value="<%= drug.pack %>" placeholder="Tablets per Pack" min="1" max="500" class="col-xs-8 col-md-4">
@@ -44,3 +44,30 @@
 <!-- add footer -->
 <%- include('includes/_footer') %>
 <!-- end footer-->
+<script>
+  document.getElementById("update_drug").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const id = document.querySelector("input[name='id']").value;
+
+    const updatedDrug = {
+      name: document.querySelector("input[name='name']").value,
+      card: document.querySelector("input[name='card']").value,
+      pack: document.querySelector("input[name='pack']").value,
+      perDay: document.querySelector("input[name='perDay']").value,
+      dosage: document.querySelector("input[name='dosage']").value
+    };
+
+    fetch(`/api/drugs/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedDrug)
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      window.location.href = "/manage"; // quay lại danh sách
+    })
+    .catch(err => console.error(err));
+  });
+</script>
